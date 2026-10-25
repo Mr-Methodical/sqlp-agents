@@ -1,73 +1,50 @@
-# SQL-P-C-Execution-Engine-and-Parser
+# SQLP for AI Agents in Data Lakes: Correctness and Token Efficiency
 
-## Links
-- https://docs.aws.amazon.com/glue/latest/dg/catalog-and-crawler.html
+Research Question: Given equivalent schema and relationship information, how does using SQLP instead of SQL affect AI agents’ query correctness and total token usage?
 
-## Notes
-- Implemented path validation, reference lookup, and one-hop path resolution.
-- Resolved paths contain structured JoinSpec and ColumnRef values.
-- Added a catalog recording tables, column types, unique-key declarations, and references.
-- Resolution checks that join columns and requested columns exist.
-- Generated and tested the complete AUTHOR/PAPER/WROTE SQL query from C++ objects.
-- Next: in-memory tables and native C++ query execution.
+## Walkthrough
+In the frontend, a client asks "Which researchers at Danish universities have published papers about databases?"
 
-## Questions
-- SQL-P has view based approaches that also make it easier to read. How is ours better/different from that?
-- How will we represent information in SQL-P ARM schema like what would our schema be basically as right now for our paths we need some way to know author is associated with that mapping (starting out should I just do it with defined mappings maybe). Enamul in his thesis had buildARM.
-- ask for him to go over buildARM syntax I was a bit confused
+1. **SQL**: agent receives question, schema, approved relationships, and possibly md file containing SQL syntax, then generates SQL.
+2. **SQLP**: Same model recieves equivalent information, definitely will need md file with sqlp syntax though, then generates SQLP. Our compiler translates it into SQL.
+3. Execute both against the same data.
+4. Compare correctness and total tokens.
 
-## Schedule
+## Possible Division of Work
+| Person | Builds |
+|---|---|
+| **Ryan** | The C++ compiler that translates SQLP into SQL. |
+| **Iris** | The program that calls the AI, executes queries, checks answers, and measures tokens. |
+| **Samridh** | Very nice website where someone asks a question and sees the comparison. |
 
-aiming to have a small native C++ execution prototype working by **October 31**.
+### Sam's Website
+- User asks question
+- Shows the SQL and SQLP queries that were generated (also shows the SQLP going to SQL when execution engine runs)
+  - or instead the user could hover over the SQLP and see what it would translate to for SQL
+- If they click on author.university it could show that it connects AUTHOR.university_id = UNIVERSITY.id (basically what we are connecting it on)
 
-### October 19–25
+### Iris's "Runner"
+1. Give the model the question, schema, relationships, and SQL instructions.
+2. Receive a SQL query and execute it in SQLite.
+3. In a separate run, give the same model equivalent information and SQLP instructions.
+4. Receive SQLP, send it to your C++ compiler, then execute the resulting SQL in SQLite.
+5. Check both answers against independently prepared expected results.
+6. Save the queries, answers, errors, and token usage for Sam to display.
 
-- Add in-memory tables and execute queries directly in C++.
-- Implement scans, reference joins, equality filtering, projection, and DISTINCT.
-- Test the example's results, empty matches, and duplicate removal before adding text parsing.
+### Ryan
+Implemented: path validation, reference lookup, catalog metadata, one-hop path resolution, and SQL rendering from constructed C++ objects.
+Planned: text parsing, multi-hop compilation, SQLite execution, the agent experiment runner, and the web interface.
 
-### October 26–31
-
-- Add a parser for the small SQLP subset and connect it to the same execution plan.
-- Test the full path from query text to results, including invalid input.
-- Put together a reproducible demo and document what's supported.
-
-### First prototype
-
-The first version will use the AUTHOR/PAPER/WROTE fixture stored in memory. The scope is one FROM table, one projected path, direct columns or one reference hop, integer/string values, an optional equality filter, and SELECT DISTINCT. References will be explicit, valid, and non-null, pointing to unique keys.
-
-The query I want to demonstrate is:
-
-```sql
-SELECT DISTINCT w.author.name AS author_name
-FROM WROTE w
-WHERE w.paper.title = 'Databases';
-```
-
-The expected result is Alice and Bob, with each appearing once and no guaranteed row order. The tests should also check empty results and reject unsupported syntax, unknown names, and type mismatches.
-
-### Longer term
-
-The next major goal is my own B+ tree integrated with the executor: first lookup, insertion, splits, and ranges in memory, then page-based storage, a bounded page cache, and a disk-backed tree. Persistence, deletion, transactions, crash recovery, and broader SQLP support will come after the first execution prototype.
-
-Maybe we could also add in type script for a visualization of how it 
-
-## Planned pipeline
-
-The tokenizer, parser, reusable query objects, and general SQL generator
-are planned. Currently, tests construct C++ Path objects directly,
-resolve them, and assemble the complete SQL query.
+### Diagram
 ```mermaid
-flowchart TD
-    A["SQLP Query Text"] --> B["Tokenizer"]
-    B --> C["Parser"]
-    C --> D["AST / Query Objects"]
-    E["Manually Constructed C++ Objects"] --> D
-    D --> F["Semantic Resolution"]
-    F --> G["SQL Code Generator"]
-    G --> H["Generated SQL"]
-    style E fill:#dbeafe,color:#1e40af,stroke:#3b82f6
-    style D fill:#dcfce7,color:#166534,stroke:#22c55e
-    style F fill:#dcfce7,color:#166534,stroke:#22c55e
-    style G fill:#dcfce7,color:#166534,stroke:#22c55e
+flowchart TD 
+    %% top down
+    A["Samridh: website receives a question"] --> B["Iris: runner calls the AI in two separate conditions"]
+    B --> C["AI generates SQL"]
+    B --> D["AI generates SQLP"]
+    D --> E["Ryan: C++ compiler produces SQL"]
+    C --> F["SQLite executes the query"]
+    E --> F
+    F --> G["Iris: checks answers and records token usage"]
+    G --> H["Samridh: website displays the comparison"]
 ```
