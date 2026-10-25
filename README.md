@@ -2,6 +2,10 @@
 
 Research Question: Given equivalent schema and relationship information, how does using SQLP instead of SQL affect AI agents’ query correctness and total token usage?
 
+Note: [NatSQL](https://github.com/ygan/NatSQL) did do something similar, but our novelty is that we are asking if named paths can help agents select the intended relationship role, and see how correctness changes as paths become longer. Also see whether shorter queries save total tokens. One other route is also is SQLP vs. NatSQL (does SQLP offer something beyond an existing simplified query representation)
+
+Hypothesis: AI is already heavily trained on SQL and not SQLP. SQLP will result in smaller queries but I think the pretraining on SQL will cause it to be slightly less correct and maybe use more tokens as well because it has to think more about it.
+
 ## Walkthrough
 In the frontend, a client asks "Which researchers at Danish universities have published papers about databases?"
 
