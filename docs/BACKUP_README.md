@@ -65,3 +65,38 @@ flowchart TD
     style F fill:#dcfce7,color:#166534,stroke:#22c55e
     style G fill:#dcfce7,color:#166534,stroke:#22c55e
 ```
+
+
+
+
+
+extra:
+### Ryan — SQLP compiler
+
+#### Implemented so far
+
+- Represent SQLP paths as C++ objects, such as `w.author.name`.
+- Validate that path components are nonempty.
+- Define and look up named reference mappings between tables.
+- Store catalog metadata: tables, columns, types, unique-key declarations,
+  and references.
+- Resolve one-hop paths into structured joins and column references.
+- Check that referenced tables and columns exist.
+- Render SQL joins and columns, and assemble the complete
+  AUTHOR/PAPER/WROTE example query in tests.
+
+Currently, tests construct C++ objects directly and check the generated SQL.
+
+#### Still to add
+
+- A tokenizer and parser that accept SQLP query text.
+- A syntax tree representing complete queries.
+- Multi-hop path resolution, including generated aliases.
+- Alias scope and type checking.
+- Query compilation for the supported SQLP core: projections,
+  multiple FROM bindings, equality, Boolean predicates, DISTINCT,
+  correlated EXISTS, and UNION.
+- Parameterized SQL output and clear compilation errors.
+- A command-line interface that Iris's runner can call with a query
+  and catalog to receive SQL, parameters, or an error.
+- Tests covering the added language features and translation behavior.
