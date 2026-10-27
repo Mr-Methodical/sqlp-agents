@@ -1,6 +1,6 @@
 # Agent context — SQLP for AI Agents
 
-Updated October 26, 2026. Read this for project context before working on the repository. It lives under `docs/`; agents working elsewhere may need to be explicitly directed to read it.
+Updated October 27, 2026. Read this for project context before working on the repository. It lives under `docs/`; agents working elsewhere may need to be explicitly directed to read it.
 
 ## Current direction and context
 
@@ -107,7 +107,7 @@ First-attempt generation is primary. Repairs are optional, with the same allowan
 
 Start with one capable accessible model, one reviewed dataset, 12 development questions, and a target of 30 held-out questions. Iris/Sam prepare independent reference SQL/answers and cross-check them. Include longer paths, competing roles, repeated references, empty answers, and duplicate-sensitive cases. Use contrasting rows so wrong relationships do not accidentally produce correct answers.
 
-Use development outcomes to improve the guides/system, then freeze supported features, guides, task eligibility, and workload size before held-out comparative outcomes. Keep failures, including unsupported model outputs on eligible tasks. Choose any smaller workload for capacity before inspecting held-out performance. Repetitions of one task are not extra independent questions.
+Use development outcomes to improve the guides/system. Freeze the evaluated features and language guides on November 7. Finish independent reference-answer checks and freeze held-out questions, task eligibility, data/catalog versions, workload size, and run settings on November 11, before any held-out model calls; run the main comparison November 12–14. Keep failures, including unsupported model outputs on eligible tasks. Choose any smaller workload for capacity before inspecting held-out performance. Repetitions of one task are not extra independent questions.
 
 Measure answer correctness and total provider-reported input/output tokens across all attempts, including guides, schema, feedback, and retries. Preserve raw usage; cache/reasoning fields may overlap totals and must not be double-counted. Report tokens per task including failures; tokens per correct task is undefined when none succeed. Query bytes, latency, and API spending are separate secondary measures. Query-source savings do not establish database-storage savings or human productivity gains.
 
@@ -115,7 +115,7 @@ Compare result values and multiplicity, not exact SQL strings. Execution success
 
 No paired model result has been established in the existing planning work. Old audit probes are scripted feasibility/failure demonstrations. The human SQLP study motivates the agent question; NatSQL/DIN-SQL already use intermediate representations and DAIL-SQL studies token efficiency. The proposed interest is named relationship roles, path length, and full interaction tokens. Stronger compiler checks mean the tested contribution is **SQLP plus compiler/checker**; syntax-only claims require further controls. Report positive, mixed, or negative findings without promising acceptance.
 
-NatSQL is an optional secondary comparator using its existing converter: cap the initial feasibility check at three shared person-hours. Include only a declared supported overlap and count conversion failures. Extra models, datasets, repetitions, and discovery must not delay the core. Model access and any spending require the team's agreed budget; advertised credits are not proof of an activated account.
+Prioritize NatSQL as a third representation using its existing converter. Cap the initial compatibility check at three shared person-hours by October 31, then at most three additional shared person-hours connecting it to the runner/UI by November 7. Pin its version, check representative manual queries against actual answers, and use a declared common feature subset. Retain conversion failures. If not callable by the gate, defer it and narrow comparison claims. DIN-SQL and DAIL-SQL inform workflow/prompt/evaluation design; they are not automatically additional representation conditions. Extra models, datasets, repetitions, and discovery must not delay the core. Model access and any spending require the team's agreed budget; advertised credits are not proof of an activated account.
 
 ## Delivery and paper context
 
@@ -123,9 +123,11 @@ NatSQL is an optional secondary comparator using its existing converter: cap the
 |---|---|
 | Oct 28 | Shared catalog/compiler/run-record examples; role and contribution expectations. |
 | Oct 31 | Query objects compile into SQL that executes; initial dataset/question bank and UI records. |
-| Nov 7 | Real text compilation, multi-hop support, paired development pilot, tested-profile/guide/workload freeze. |
+| Nov 4 | Minimal callable text-compiler handoff to Iris. |
+| Nov 7 | Multi-hop text compilation, development pilot, feature/guide freeze, NatSQL integration gate. |
 | Nov 9 | Proposed internal outline/rough-material review with Enamul; not an official outline deadline. |
-| Nov 14 | Main comparison and initial analysis; connected demo. |
+| Nov 11 | Independent answer checks complete; held-out workload/settings freeze before model calls. |
+| Nov 14 | Nov 12–14 main comparison and initial analysis complete; connected demo. |
 | Nov 18 | First complete four-page draft. |
 | Nov 21 | Reviewed paper, reproducible artifact, rehearsal, and video. |
 | Nov 22 | Internal submission target; Nov 23 is the official demo deadline and contingency. |

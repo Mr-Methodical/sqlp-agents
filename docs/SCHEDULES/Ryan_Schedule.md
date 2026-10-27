@@ -1,22 +1,24 @@
 # Ryan's schedule — C++ compiler
 
-**October 26–November 23, 2026 · 12–15 hours/week · Proposed for group review**
+Build the C++ SQLP-to-SQL compiler. It returns SQL, parameters, path mappings, or useful errors; SQLite executes the SQL. The current code has one-hop helpers, not a complete compiler.
 
-Your component accepts SQLP text plus the approved relationship catalog and returns SQL, parameter values, and useful errors. **SQLite supplies execution.** Current work provides path/catalog helpers and one-hop SQL rendering; the complete-query compiler and parser still need building.
+**Current course proposal:** draft the opening/problem and SQLP motivation by Canvas's actual deadline, separately from the project dates below.
 
 | Due | Deliverable |
 |---|---|
-| **Wed Oct 28** | Agree with Iris on compiler input/output and catalog format. Trace the existing complete-query test; sketch the small query AST. |
-| **Sat Oct 31** | Define the AST and implement `compile_query` from C++ objects. Return complete SQL and separate parameters. Test a filter, repeated reference, and invalid name; execute one example with Iris. Help check the chosen dataset's reference assumptions. Text parsing is a stretch this week. |
-| **Sat Nov 7** | Add the tokenizer/Bison parser and a command-line interface Iris can call. Support multi-hop references, generated aliases, shared joins, and clear diagnostics. Give Iris a working text-query example early in the week and Sam a minimal path-to-join record. Freeze and document the tested subset. |
-| **Mon Nov 9** | Supply the architecture diagram, supported-feature list, and a short explanation of SQLP → AST → SQL for the internal outline review. |
-| **Sat Nov 14** | Fix correctness defects exposed by integration and evaluation. Check catalog assumptions and parameter/type handling. Avoid adding syntax during the main comparison. |
-| **Wed Nov 18** | Finish the compiler/architecture section and review every implementation claim in the first complete paper. |
-| **Sat Nov 21** | Verify a clean build, regression tests, compiler instructions, and the exact demo queries. Rerun affected experiments with Iris after any correctness fix. |
-| **Sun Nov 22** | Review the final PDF and artifact, confirm the final author list/order with the group, and coordinate submission. Keep Nov 23 available for submission issues. |
+| **Wed Oct 28** | Agree on catalog/compiler formats. Trace Test 10 and sketch the query AST. |
+| **Sat Oct 31** | Implement `compile_query` from query objects, returning SQL and separate parameters. Check invalid names, filters, and reused joins. Execute one example with Iris and check the dataset's reference assumptions. |
+| **Wed Nov 4** | Hand Iris a minimal tokenizer/parser and callable CLI: one real SQLP text query plus catalog produces SQL/parameters or an error. Bison should build the same AST. |
+| **Sat Nov 7** | Finish multi-hop paths, generated aliases, shared joins, and basic checks. Supply Sam a path-to-join record. Freeze and document the evaluated language subset. |
+| **Mon Nov 9** | Supply architecture, supported features, and a query trace for the proposed internal outline review with Enamul. |
+| **Wed Nov 11** | Help verify references and contrasting data cases before the held-out workload freezes. |
+| **Sat Nov 14** | Support evaluation with correctness fixes only. Coordinate reruns after fixes; preserve the frozen feature profile. |
+| **Wed Nov 18** | Finish architecture text and assemble the four-page draft from everyone's sections, figures, and results. Review technical claims. |
+| **Sat Nov 21** | Verify a clean build, regression checks, instructions, and demo queries. Rehearse tracing one query through the compiler. |
+| **Sun Nov 22** | Review/approve the PDF and artifact, confirm authorship with the group, and coordinate submission. Reserve Nov 23 for submission issues. |
 
-**Required first release:** projections, one FROM binding/alias, multi-hop paths, literal equality and AND, DISTINCT, basic name/type checks, and parameterized SQL. Correlated EXISTS, UNION, and broader syntax remain later learning goals. After November 7, preserve the tested profile through submission. This is the evaluated subset, not a claim to implement the full language.
+**Required subset:** projections, one FROM binding/alias, multi-hop paths, literal equality/AND, DISTINCT, parameters, and basic checks. EXISTS, UNION, and broader syntax remain later goals. If the Nov 4 handoff slips, simplify the first parser immediately and flag the dependency.
 
-**Learning check:** explain one query through every compiler stage without relying on generated code you cannot explain. Use AI for small implementations, explanations, and counterexamples; review each increment yourself.
+**Learning:** work in small increments you can explain. Use AI for bounded help and counterexamples. A large unfamiliar generated implementation would undermine the goal.
 
-**Handoff:** Iris needs callable text compilation by November 7; Sam needs the path-to-join mapping for display. If that date is at risk, tell them early and cut optional grammar. [Shared schedule](SCHEDULE.md) · [Agent context](../AGENTS.md)
+[Shared schedule](SCHEDULE.md) · [Agent context](../AGENTS.md)

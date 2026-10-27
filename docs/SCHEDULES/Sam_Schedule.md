@@ -1,22 +1,26 @@
 # Samridh's schedule — website and demo
 
-**October 26–November 23, 2026 · 8–10 hours/week · Proposed for group review**
+Build the TypeScript comparison website. Show the question, generated queries, SQLP translation, answers, errors, and tokens. Iris runs experiments; Ryan compiles SQLP. Support a third representation when NatSQL passes its integration gate.
 
-Build the TypeScript website that makes the comparison understandable: the question, generated SQL and SQLP, compiled SQL, answers, correctness labels, and tokens. Iris owns experiment execution; Ryan owns SQLP compilation.
+**Current course proposal:** review the walkthrough/readability before Canvas submission.
 
 | Due | Deliverable |
 |---|---|
-| **Wed Oct 28** | Agree with Iris on one saved run record. Sketch a simple comparison page and the first demo question. |
-| **Sat Oct 31** | Build the page using clearly labeled sample records. Show both conditions, answers, errors, and token fields. Help choose the dataset, start drafting questions/reference SQL, and check initial answers. Spend at most one hour helping Iris assess the existing NatSQL converter. |
-| **Sat Nov 7** | Load real saved pilot records from Iris. Show SQLP alongside its compiled SQL. Add simple relationship inspection: clicking a path reveals its catalog mapping. Draft half the held-out questions/reference SQL and cross-check Iris's half before the workload freezes. |
-| **Mon Nov 9** | Supply a screenshot and a short audience walkthrough for the internal outline review. Explain what a visitor can change and inspect. |
-| **Sat Nov 14** | Connect the question form to Iris's local runner. Show running/error states and completed records. Finish path highlighting if time permits; help inspect surprising answers. |
-| **Wed Nov 18** | Finish the demonstration-scenarios section, architecture screenshot, and walkthrough for the first complete paper. |
-| **Sat Nov 21** | Rehearse a reliable demonstration. Record the encouraged video, at most five minutes and 50 MB, and prepare a clearly labeled replay of real runs as fallback. Verify the interface against Iris's records. |
-| **Sun Nov 22** | Check the final PDF's screenshots, video, and interaction claims; review/approve with the group and support submission. Keep Nov 23 available for submission issues. |
+| **Wed Oct 28** | Read IDEA.md, agree on one run record with Iris, and sketch the comparison page. |
+| **Sat Oct 31** | Display two clearly labeled sample records, including answers/errors/tokens. Help choose the dataset, start questions/reference SQL, and share the three-hour NatSQL compatibility check. |
+| **Wed Nov 4** | Make the page load Iris's saved run records so UI work proceeds independently of a live API. |
+| **Sat Nov 7** | Display real SQL/SQLP pilot records and compiled SQL. Clicking a path should show its join mapping. Add a NatSQL view only if integrated; keep the two-condition page working. Continue the held-out question bank. |
+| **Mon Nov 9** | Supply a screenshot and visitor walkthrough for the proposed internal outline review. |
+| **Wed Nov 11** | Finish your half of the held-out questions/reference SQL and cross-check Iris's half before the workload freezes. |
+| **Sat Nov 14** | Connect the question form to Iris's local runner; show running/error/completed states. Help inspect results and finish simple path highlighting. |
+| **Wed Nov 18** | Complete the demonstration-scenarios text, screenshot, and walkthrough for the four-page draft. |
+| **Sat Nov 21** | Rehearse the working demo. Record the encouraged video, at most five minutes/50 MB. Prepare a labeled replay of real runs and verify displays against Iris's records. |
+| **Sun Nov 22** | Review/approve screenshots, video, and interaction claims; support submission. Reserve Nov 23 for submission issues. |
 
-**Minimum interaction:** choose a prepared question, inspect both queries/answers/tokens, and inspect a reference path. For example, show that `author.university` follows `AUTHOR.university_id = UNIVERSITY.id`. A simple highlighted list is enough before a graph animation.
+**Minimum interaction:** choose a question, compare queries/answers/tokens, and inspect a path's physical join. A highlighted list is sufficient before graph animation.
 
-Prepared questions can show independently checked correctness. Arbitrary questions should say **“not independently benchmark-scored.”** Clearly distinguish live runs, recorded real runs, and development fixtures.
+Prepared questions have checked correctness labels. Arbitrary questions say **“not independently benchmark-scored.”** Label live runs, recorded real runs, and sample fixtures accurately.
 
-**Scope:** prioritize a clear local demo. Authentication, a Notion-style editor, automatic relationship discovery, deployment infrastructure, and another compiler are optional future work. If time is tight, simplify animation and styling before cutting answer visibility or the walkthrough. [Shared schedule](SCHEDULE.md) · [Agent context](../AGENTS.md)
+**Scope:** prioritize the local walkthrough. Cut animation/styling before answer visibility. Authentication, a general editor, discovery, cloud deployment, and another compiler are outside this deadline.
+
+[Shared schedule](SCHEDULE.md) · [Agent context](../AGENTS.md)

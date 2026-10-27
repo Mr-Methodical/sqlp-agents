@@ -1,8 +1,8 @@
 # Group schedule — SQLP for AI Agents
 
-**October 26–November 23, 2026 · Proposed commitments for group review**
+Internal checkpoints for group review, updated October 27, 2026.
 
-**Goal:** one interactive demo and one four-page ICDE demo paper. Given the same question, schema, and approved relationships, compare an agent generating SQL with one generating SQLP. Ryan's C++ compiler translates SQLP; SQLite executes both. Measure answer correctness and total input/output tokens, including instructions and retries.
+**Goal:** one interactive demo and four-page paper comparing correctness and total tokens for SQL/SQLP, with NatSQL if its existing converter is usable. SQLite executes all conditions.
 
 | Owner | Main responsibility | Weekly budget |
 |---|---|---|
@@ -10,20 +10,26 @@
 | [Iris](Iris_Schedule.md) | Agent runner, SQLite execution, evaluation | 8–10 hours |
 | [Samridh](Sam_Schedule.md) | TypeScript website, demo walkthrough | 8–10 hours |
 
-**First handoff, Wed October 28:** agree on one example catalog, compiler input/output, and saved run record. Choose model access and a call budget; discuss contribution expectations and provisional authorship. Iris can start with hand-written SQL; Sam can start with clearly labeled sample records.
+**By Wed Oct 28:** read [IDEA.md](../IDEA.md); agree on catalog/compiler/run-record examples, model access, budget, and contribution expectations. Iris starts with hand-written SQL; Sam starts with sample records.
+
+**Course writing:** Ryan drafts the opening/SQLP motivation; Iris drafts NatSQL/DIN-SQL related work; Sam reviews the walkthrough. Follow Canvas's deadline. November 9 is a proposed internal review, not an official outline deadline.
 
 | Due | What the group should be able to show |
 |---|---|
-| **Sat Oct 31** | A C++ query object compiles into SQL that runs in SQLite; Sam displays the shared record. Choose the dataset and start the shared question bank. |
-| **Sat Nov 7** | Real SQLP text compiles; a paired model pilot runs; the website displays real records. Freeze tested features, guides, and evaluation questions. |
-| **Mon Nov 9** | Outline and rough section material ready to review with Enamul. This is a proposed internal date; confirm his intended timing. |
-| **Sat Nov 14** | Held-out comparison completed, initial analysis saved, and the question-to-answer demo connected. |
-| **Wed Nov 18** | First complete four-page paper assembled for group/mentor feedback. |
-| **Sat Nov 21** | Checked paper, reproducible demo, rehearsal, and video ready. |
-| **Sun Nov 22** | All authors review/approve; designated submitter aims to submit. **Nov 23 is the official demo deadline and contingency day.** |
+| **Sat Oct 31** | Query objects → SQL/parameters → checked SQLite answers. UI displays a record. Select dataset/start questions; decide NatSQL feasibility. |
+| **Wed Nov 4** | Ryan hands Iris a callable text compiler for a tiny supported query. Iris connects it before the pilot. |
+| **Sat Nov 7** | Multi-hop queries, development pilot, and real UI records. Freeze features/guides; NatSQL must be integrated to enter the study. |
+| **Mon Nov 9** | Outline and rough section material for Enamul's review; confirm his intended timing. |
+| **Wed Nov 11** | Finish answer checks; freeze held-out questions, data/catalog versions, workload size, and settings before any held-out calls. |
+| **Sat Nov 14** | Complete the Nov 12–14 evaluation, initial analysis, and connected demo. |
+| **Wed Nov 18** | Complete four-page draft for group/mentor feedback. |
+| **Sat Nov 21** | Checked paper, reproducible artifact, video, and rehearsal ready. |
+| **Sun Nov 22** | All authors approve; designated submitter aims to submit. **Nov 23 is the official deadline and contingency day.** |
 
-At each Saturday checkpoint, show one working example and link the code/results. Flag missed dependencies immediately. Hours include reading, writing, and integration.
+Show a working example each Saturday; flag blocked handoffs early. Hours include reading, writing, and integration.
 
-Start with one model, one reviewed dataset, 12 development questions, and a target of 30 held-out questions. Iris and Sam share question preparation and independently check each other's answers. Freeze workload size before held-out outcomes; a smaller checked set beats rushed answers. NatSQL gets at most **three shared person-hours** for a feasibility check; add it only if the required pipeline stays on schedule. Extra models and broader grammar come later.
+Use one model, one dataset, about 12 development questions, and a target of 30 held-out questions. Iris/Sam split preparation and cross-check answers. Reduce workload by Nov 11 if needed, before seeing held-out outcomes.
 
-The [ICDE demo call](https://icde2027.github.io/cf-demonstrations.html) requires IEEE format and four pages including references. November 9 is **not a published outline deadline**. The separate course assignment follows Canvas's deadline. See [IDEA.md](../IDEA.md) for the direction and [AGENTS.md](../AGENTS.md) for technical/evaluation context.
+**NatSQL gate:** three shared person-hours checking five manual cases by Oct 31, then at most three additional shared person-hours integrating by Nov 7. Declare common features and retain conversion failures. If not ready, defer/narrow claims. Cut extra models, repairs, grammar, and animation first.
+
+The [ICDE demo call](https://icde2027.github.io/cf-demonstrations.html) requires IEEE format and four pages including references. See [AGENTS.md](../AGENTS.md) for compiler semantics and fair-evaluation rules.
