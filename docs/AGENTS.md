@@ -1,6 +1,6 @@
 # Agent context — SQLP for AI Agents
 
-Updated October 28, 2026. Read this for project context before working on the repository. It lives under `docs/`; agents working elsewhere may need to be explicitly directed to read it.
+Updated October 29, 2026. Read this for project context before working on the repository. It lives under `docs/`; agents working elsewhere may need to be explicitly directed to read it.
 
 ## Current direction and context
 
@@ -36,7 +36,7 @@ Iris's runner orchestrates execution; Sam's UI calls it. Iris and Sam share ques
 
 ## Actual code at this update
 
-Verified October 28: `make test` passes all three existing suites and the new query-compiler checks. A separate temporary SQLite fixture also verified ten actual-result cases, including duplicates, distinct roles, bound literals, and quoted identifiers; that smoke check is not part of `make test`. Recheck the working tree before assigning unfinished work.
+Verified October 29: `make test` passes the three legacy suites, query-compiler checks, and new lexer checks. The separate October 28 SQLite smoke test verified ten actual-result cases; it is not part of `make test`. Recheck the working tree before assigning unfinished work.
 
 | Files | Present behavior |
 |---|---|
@@ -45,12 +45,13 @@ Verified October 28: `make test` passes all three existing suites and the new qu
 | `src/catalog.h`, `.cc` | Tables, Integer/String columns, uniqueness declarations, references, column lookup. |
 | `src/sql.h`, `.cc` | `ColumnRef`, `JoinSpec`, one-join `ResolvedPath`, renderers, one-hop `resolve_path`. |
 | `src/query.h`, `.cc` | Small query AST and `compile_query`: one FROM binding, direct/one-hop projections, optional equality filter, explicit DISTINCT, quoted SQL identifiers, and typed parameters. Allocates aliases and reuses joins by reference role. |
+| `src/lexer.h`, `.cc` | Owned-input `Lexer::next()` produces tokens with source spans, decoded text, and checked int64 values. Supports keywords, identifiers, SQL-style quoting, punctuation, and comments; malformed input throws a located `LexerError`. |
 | `src/main.cc` | Constructs and prints `w.author.name`. It does not compile text. |
-| `tests/` | Path/mapping checks, 13 legacy SQL cases, and query-compiler checks. Legacy Test 10 still demonstrates manual SQL rendering; `query_test.cc` exercises complete-query compilation. |
+| `tests/` | Path/mapping checks, 13 legacy SQL cases, query-compiler checks, and lexer checks for token streams, quote escapes, numeric boundaries, diagnostics, ownership, and source positions. Legacy Test 10 still demonstrates manual SQL rendering. |
 
 The lower-level `resolve_path` still requires exactly two features and a caller-supplied source table/target alias. The new `compile_query` owns query-level alias allocation, validates path roots, checks used reference key types and uniqueness declarations, and checks predicate literal types. It supports direct columns without joins and one reference hop. Actual row integrity and ambiguous/duplicate catalog declarations are not validated; `ColumnSchema.unique` is metadata, not proof about imported rows.
 
-There is no text parser, multi-hop compilation, compiler CLI, production SQLite adapter, model runner, or web interface yet. Query objects are constructed in C++. Do not mistake planned components for implemented ones. The old empty-vector test failure-return issue is fixed; do not reassign it from historical notes.
+There is no text parser, multi-hop compilation, compiler CLI, production SQLite adapter, model runner, or web interface yet. Tokenization works, but Query objects are still constructed in C++. The lexer recognizes AND for the planned grammar; the compiler still accepts only one equality predicate. The old empty-vector test failure-return issue is fixed; do not reassign it from historical notes.
 
 From the repository root:
 
@@ -64,12 +65,14 @@ Requirements are GNU Make and a C++20-capable `g++`. `make run` currently prints
 
 ## Next compiler increment
 
-The object-to-SQL increment is implemented. Trace the complete example in `tests/query_test.cc` through `compile_query` before adding another stage. `SqlValue` holds either an int64 or string, `std::optional` represents an absent alias/filter, and `Query.distinct` defaults to false so duplicates are preserved unless explicitly removed.
+The object compiler and tokenizer are implemented. Trace `tests/query_test.cc` and `tests/lexer_test.cc` before adding the parser. `Query.distinct` defaults to false; `std::optional` represents absent aliases/filters; `SqlValue` preserves string/int64 types. Tokens own their text, decode doubled quote delimiters, and carry a start location and exclusive end. Locations use zero-based byte offsets and one-based byte columns; CRLF counts as one line break.
 
-1. Add a small handwritten tokenizer and Bison C++ parser that construct the existing `Query`, `Projection`, and `EqualityPredicate` objects. Bison generates parser machinery; semantic actions build the AST.
+1. Add the Bison C++ parser, adapting `Lexer::next()` tokens and locations into the generated parser. Semantic actions should construct the existing `Query`, `Projection`, and `EqualityPredicate` objects. Start with one equality filter; enforce a semicolon and EOF.
 2. Expose the minimal text-to-SQL route through a callable CLI with Iris, keeping parameters separate from SQL.
 3. Extend path binding to a sequence of reference joins, retaining alias scope and role-sensitive prefix reuse. Add tests for longer paths and paths that revisit a table.
 4. Add a minimal path-to-join trace for Sam and dataset checks for Iris. Keep actual-row validation separate from catalog declarations.
+
+Lexer conventions: bare identifiers use ASCII letters/underscore followed by letters/digits/underscore; double quotes allow other identifier characters. Strings use single quotes; repeated delimiters escape a quote and backslashes are literal. Decimal int64 values may have an adjacent minus sign. Plus signs, fractional/exponent/hex forms, empty quoted identifiers, embedded NULs, and unterminated quotes/comments are rejected. Line comments (`--`) and non-nested block comments (`/* ... */`) are skipped. No parser or complete text-query support is implied by lexical acceptance.
 
 These are incremental tasks, not authorization to implement the entire sequence unattended. For Ryan's next block, select the smallest useful unfinished step after reading the current code.
 

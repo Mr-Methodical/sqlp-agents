@@ -31,14 +31,19 @@ build/query_test: tests/query_test.cc src/query.cc src/query.h src/sql.cc \
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) tests/query_test.cc src/query.cc \
 	src/sql.cc src/catalog.cc src/mapping.cc -o $@
 
+build/lexer_test: tests/lexer_test.cc src/lexer.cc src/lexer.h Makefile
+	mkdir -p build
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) tests/lexer_test.cc src/lexer.cc -o $@
+
 run: build/sqlp_demo
 	@./build/sqlp_demo
 
-test: build/path_test build/mapping_test build/sql_test build/query_test
+test: build/path_test build/mapping_test build/sql_test build/query_test build/lexer_test
 	@./build/path_test
 	@./build/mapping_test
 	@./build/sql_test
 	@./build/query_test
+	@./build/lexer_test
 
 clean:
 	rm -rf build
