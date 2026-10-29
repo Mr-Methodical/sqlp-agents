@@ -1,6 +1,6 @@
 # Agent context — SQLP for AI Agents
 
-Updated October 27, 2026. Read this for project context before working on the repository. It lives under `docs/`; agents working elsewhere may need to be explicitly directed to read it.
+Updated October 28, 2026. Read this for project context before working on the repository. It lives under `docs/`; agents working elsewhere may need to be explicitly directed to read it.
 
 ## Current direction and context
 
@@ -36,7 +36,7 @@ Iris's runner orchestrates execution; Sam's UI calls it. Iris and Sam share ques
 
 ## Actual code at this update
 
-This is a source-inspected snapshot, not a fresh test-run report. Recheck the working tree before assigning unfinished work.
+Verified October 28: `make test` passes all three existing suites and the new query-compiler checks. A separate temporary SQLite fixture also verified ten actual-result cases, including duplicates, distinct roles, bound literals, and quoted identifiers; that smoke check is not part of `make test`. Recheck the working tree before assigning unfinished work.
 
 | Files | Present behavior |
 |---|---|
@@ -44,12 +44,13 @@ This is a source-inspected snapshot, not a fresh test-run report. Recheck the wo
 | `src/mapping.h`, `.cc` | Five-field `ReferenceMapping`; lookup by source table and feature name. |
 | `src/catalog.h`, `.cc` | Tables, Integer/String columns, uniqueness declarations, references, column lookup. |
 | `src/sql.h`, `.cc` | `ColumnRef`, `JoinSpec`, one-join `ResolvedPath`, renderers, one-hop `resolve_path`. |
+| `src/query.h`, `.cc` | Small query AST and `compile_query`: one FROM binding, direct/one-hop projections, optional equality filter, explicit DISTINCT, quoted SQL identifiers, and typed parameters. Allocates aliases and reuses joins by reference role. |
 | `src/main.cc` | Constructs and prints `w.author.name`. It does not compile text. |
-| `tests/` | Path/mapping checks and 13 SQL cases; Test 10 manually assembles a complete query. |
+| `tests/` | Path/mapping checks, 13 legacy SQL cases, and query-compiler checks. Legacy Test 10 still demonstrates manual SQL rendering; `query_test.cc` exercises complete-query compilation. |
 
-`resolve_path` currently requires exactly two features: one reference followed by a terminal column, as in `w.author.name`. The caller supplies the source table and target alias. It checks column existence and returns structured join/column values. It does **not** establish type compatibility, target uniqueness, row integrity, or alias scope. `ColumnSchema.unique` is metadata, not enforced data validation.
+The lower-level `resolve_path` still requires exactly two features and a caller-supplied source table/target alias. The new `compile_query` owns query-level alias allocation, validates path roots, checks used reference key types and uniqueness declarations, and checks predicate literal types. It supports direct columns without joins and one reference hop. Actual row integrity and ambiguous/duplicate catalog declarations are not validated; `ColumnSchema.unique` is metadata, not proof about imported rows.
 
-There is no complete-query AST/compiler, text parser, compiler CLI, SQLite integration, model runner, or web interface yet. Do not mistake planned components for implemented ones. The old empty-vector test failure-return issue is fixed; do not reassign it from historical notes.
+There is no text parser, multi-hop compilation, compiler CLI, production SQLite adapter, model runner, or web interface yet. Query objects are constructed in C++. Do not mistake planned components for implemented ones. The old empty-vector test failure-return issue is fixed; do not reassign it from historical notes.
 
 From the repository root:
 
@@ -63,13 +64,12 @@ Requirements are GNU Make and a C++20-capable `g++`. `make run` currently prints
 
 ## Next compiler increment
 
-Move complete-query assembly out of Test 10 into a reusable compiler:
+The object-to-SQL increment is implemented. Trace the complete example in `tests/query_test.cc` through `compile_query` before adding another stage. `SqlValue` holds either an int64 or string, `std::optional` represents an absent alias/filter, and `Query.distinct` defaults to false so duplicates are preserved unless explicitly removed.
 
-1. Define a small AST: projection paths, one FROM table/alias, and an optional path-equals-literal predicate. Reuse `Path`.
-2. Implement `compile_query(query, catalog)` returning complete SQL and ordered typed parameters. Let the compiler allocate aliases and reuse appropriate joins.
-3. Check the existing AUTHOR/PAPER/WROTE example, changed literals, unknown names, and repeated references. Verify actual SQLite answers with Iris separately from SQL-string checks.
-4. Add a tokenizer and Bison C++ parser that constructs the same AST. Bison supplies the parser machinery; semantic actions build our AST. A small handwritten lexer is the planned scanner.
-5. Extend resolution to multi-hop paths, then expose text compilation through a simple CLI for Iris.
+1. Add a small handwritten tokenizer and Bison C++ parser that construct the existing `Query`, `Projection`, and `EqualityPredicate` objects. Bison generates parser machinery; semantic actions build the AST.
+2. Expose the minimal text-to-SQL route through a callable CLI with Iris, keeping parameters separate from SQL.
+3. Extend path binding to a sequence of reference joins, retaining alias scope and role-sensitive prefix reuse. Add tests for longer paths and paths that revisit a table.
+4. Add a minimal path-to-join trace for Sam and dataset checks for Iris. Keep actual-row validation separate from catalog declarations.
 
 These are incremental tasks, not authorization to implement the entire sequence unattended. For Ryan's next block, select the smallest useful unfinished step after reading the current code.
 

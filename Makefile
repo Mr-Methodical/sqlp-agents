@@ -24,13 +24,21 @@ build/sql_test: tests/sql_test.cc src/sql.cc src/sql.h src/mapping.cc \
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) tests/sql_test.cc \
 	src/sql.cc src/mapping.cc src/catalog.cc -o $@
 
+build/query_test: tests/query_test.cc src/query.cc src/query.h src/sql.cc \
+				src/sql.h src/catalog.cc src/catalog.h src/mapping.cc \
+				src/mapping.h src/path.h Makefile
+	mkdir -p build
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) tests/query_test.cc src/query.cc \
+	src/sql.cc src/catalog.cc src/mapping.cc -o $@
+
 run: build/sqlp_demo
 	@./build/sqlp_demo
 
-test: build/path_test build/mapping_test build/sql_test
+test: build/path_test build/mapping_test build/sql_test build/query_test
 	@./build/path_test
 	@./build/mapping_test
 	@./build/sql_test
+	@./build/query_test
 
 clean:
 	rm -rf build
