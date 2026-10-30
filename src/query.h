@@ -23,7 +23,7 @@ struct EqualityPredicate {
 };
 
 // The first query subset: one FROM binding and an optional equality filter.
-// A parser can later construct these same objects from SQLP text.
+// Both the text parser and C++ callers construct these objects.
 struct Query {
     std::string source_table;
     std::string source_alias;
