@@ -5,7 +5,7 @@ CXXFLAGS := -std=c++20 -Wall -Wextra -Wpedantic -g
 
 .PHONY: all run test clean
 
-all: build/sqlp_demo
+all: build/sqlp_demo build/sqlpc
 
 build/sqlp_demo: src/main.cc src/path.h Makefile
 	mkdir -p build
@@ -51,16 +51,25 @@ build/parser_test: tests/parser_test.cc src/parser.cc src/parser.h \
 	build/sqlp_parser.cc src/lexer.cc src/query.cc src/sql.cc \
 	src/catalog.cc src/mapping.cc -o $@
 
+build/sqlpc: src/compiler_main.cc src/parser.cc src/parser.h \
+				build/sqlp_parser.cc build/sqlp_parser.h src/lexer.cc src/lexer.h \
+				src/query.cc src/query.h src/sql.cc src/sql.h src/catalog.cc \
+				src/catalog.h src/mapping.cc src/mapping.h src/path.h Makefile
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) src/compiler_main.cc src/parser.cc \
+	build/sqlp_parser.cc src/lexer.cc src/query.cc src/sql.cc \
+	src/catalog.cc src/mapping.cc -o $@
+
 run: build/sqlp_demo
 	@./build/sqlp_demo
 
-test: build/path_test build/mapping_test build/sql_test build/query_test build/lexer_test build/parser_test
+test: build/path_test build/mapping_test build/sql_test build/query_test build/lexer_test build/parser_test build/sqlpc
 	@./build/path_test
 	@./build/mapping_test
 	@./build/sql_test
 	@./build/query_test
 	@./build/lexer_test
 	@./build/parser_test
+	python3 tests/compiler_cli_test.py
 
 clean:
 	rm -rf build
